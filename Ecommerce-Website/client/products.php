@@ -1,7 +1,12 @@
 <?php
 session_start();
 
-$query = $_POST['query'];
+if (isset($_POST['query'])) {
+    $query = $_POST['query'];
+} else {
+    $query = 9999999;
+}
+
 $apiurl = "http://127.0.0.1/Ecommerce-Website/client/search.php?query=$query";
 $response = file_get_contents($apiurl);
 // echo ($response);
