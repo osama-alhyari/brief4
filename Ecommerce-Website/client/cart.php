@@ -116,7 +116,7 @@ $conn = new mysqli($servername, $username, $password, $dbname);
                                                     } else {
                                                         echo "http://localhost/ecommerce-Website/reg/login.php";
                                                     }
-                                                    ?>"><i class="fa-solid fa-cart-shopping"></i><?php echo count($_SESSION['cart']) ?></a></li>
+                                                    ?>"><i class="fa-solid fa-cart-shopping"></i><?php echo $_SESSION['cart_num_of_items'] ?></a></li>
                 </ul>
             </div>
         </div>
@@ -168,151 +168,151 @@ $conn = new mysqli($servername, $username, $password, $dbname);
                     <div class="card-body">
                         <h4 class="card-title">Cart Total</h4>
                         <p>Total Amount: <span id="total-amount">$ <?php echo $_SESSION['total']; ?></span></p>
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-md-6">
                                 <input style="margin-top:17%" type="text" class="form-control" id="coupon" placeholder="Coupon Code">
                             </div>
                             <div class="col-md-6">
                                 <button style="margin-bottom:4%;height:70%" class="btn btn-black mt-3" id="apply-coupon">Apply Coupon</button>
-                            </div>
-                        </div>
+                            </div> -->
+                        <!-- </div>
                         <div class="row mt-3">
                             <div class="col-md-12">
                                 <button style="margin-left:7%" class="btn btn-black btn-lg py-3 btn-block" id="checkout">Proceed To Checkout</button>
                             </div>
-                        </div>
+                        </div> -->
+                        <!-- </div> -->
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- End Cart Section -->
+        <!-- End Cart Section -->
 
-    <!-- Scripts -->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            function recalculateTotal() {
-                let totalAmount = 0;
-                document.querySelectorAll('#cart-items tr').forEach(row => {
-                    let price = parseFloat(row.querySelector('td:nth-child(2)').innerText.replace('$', ''));
-                    let quantity = parseInt(row.querySelector('.quantity-amount').value);
-                    totalAmount += price * quantity;
-                });
-                document.querySelectorAll('#total-amount').forEach(el => {
-                    el.innerText = '$' + totalAmount.toFixed(2);
-                });
-            }
+        <!-- Scripts -->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', (event) => {
+                function recalculateTotal() {
+                    let totalAmount = 0;
+                    document.querySelectorAll('#cart-items tr').forEach(row => {
+                        let price = parseFloat(row.querySelector('td:nth-child(2)').innerText.replace('$', ''));
+                        let quantity = parseInt(row.querySelector('.quantity-amount').value);
+                        totalAmount += price * quantity;
+                    });
+                    document.querySelectorAll('#total-amount').forEach(el => {
+                        el.innerText = '$' + totalAmount.toFixed(2);
+                    });
+                }
 
-            const increaseButtons = document.querySelectorAll('.increase');
-            increaseButtons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    let input = e.target.closest('.input-group').querySelector('.quantity-amount');
-                    let currentValue = parseInt(input.value);
-                    input.value = currentValue + 1;
-                    updateCart({
-                        productId: e.target.closest('tr').getAttribute('data-product-id'),
-                        quantity: input.value
-                    }, 'update');
-                    recalculateTotal();
-                });
-            });
-
-            const decreaseButtons = document.querySelectorAll('.decrease');
-            decreaseButtons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    let input = e.target.closest('.input-group').querySelector('.quantity-amount');
-                    let currentValue = parseInt(input.value);
-                    if (currentValue > 1) {
-                        input.value = currentValue - 1;
+                const increaseButtons = document.querySelectorAll('.increase');
+                increaseButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        let input = e.target.closest('.input-group').querySelector('.quantity-amount');
+                        let currentValue = parseInt(input.value);
+                        input.value = currentValue + 1;
                         updateCart({
                             productId: e.target.closest('tr').getAttribute('data-product-id'),
                             quantity: input.value
                         }, 'update');
                         recalculateTotal();
-                    }
+                    });
+                });
+
+                const decreaseButtons = document.querySelectorAll('.decrease');
+                decreaseButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        let input = e.target.closest('.input-group').querySelector('.quantity-amount');
+                        let currentValue = parseInt(input.value);
+                        if (currentValue > 1) {
+                            input.value = currentValue - 1;
+                            updateCart({
+                                productId: e.target.closest('tr').getAttribute('data-product-id'),
+                                quantity: input.value
+                            }, 'update');
+                            recalculateTotal();
+                        }
+                    });
+                });
+
+                const removeButtons = document.querySelectorAll('.remove-item');
+                removeButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (confirm('Are you sure you want to remove this item?')) {
+                            let row = e.target.closest('tr');
+                            let productId = row.getAttribute('data-product-id');
+                            row.remove();
+                            updateCart({
+                                productId: productId
+                            }, 'delete');
+                            recalculateTotal();
+                        }
+                    });
+                });
+
+                function updateCart(data, action) {
+                    fetch('', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                action: action,
+                                ...data
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.success) {
+                                alert('Error updating cart');
+                            }
+                        });
+                }
+
+                document.getElementById('apply-coupon').addEventListener('click', () => {
+                    const coupon = document.getElementById('coupon').value;
+                    fetch('', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                coupon: coupon
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                document.getElementById('total-amount').innerText = '$' + data.newTotal;
+                            } else {
+                                alert('Invalid coupon');
+                            }
+                        });
+                });
+
+                document.getElementById('checkout').addEventListener('click', () => {
+                    fetch('', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                checkout: true
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert(data.message);
+                                window.location.href = 'order_confirmation.html'; // Redirect after successful checkout
+                            } else {
+                                alert('Error processing order');
+                            }
+                        });
                 });
             });
-
-            const removeButtons = document.querySelectorAll('.remove-item');
-            removeButtons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (confirm('Are you sure you want to remove this item?')) {
-                        let row = e.target.closest('tr');
-                        let productId = row.getAttribute('data-product-id');
-                        row.remove();
-                        updateCart({
-                            productId: productId
-                        }, 'delete');
-                        recalculateTotal();
-                    }
-                });
-            });
-
-            function updateCart(data, action) {
-                fetch('', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            action: action,
-                            ...data
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.success) {
-                            alert('Error updating cart');
-                        }
-                    });
-            }
-
-            document.getElementById('apply-coupon').addEventListener('click', () => {
-                const coupon = document.getElementById('coupon').value;
-                fetch('', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            coupon: coupon
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            document.getElementById('total-amount').innerText = '$' + data.newTotal;
-                        } else {
-                            alert('Invalid coupon');
-                        }
-                    });
-            });
-
-            document.getElementById('checkout').addEventListener('click', () => {
-                fetch('', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            checkout: true
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert(data.message);
-                            window.location.href = 'order_confirmation.html'; // Redirect after successful checkout
-                        } else {
-                            alert('Error processing order');
-                        }
-                    });
-            });
-        });
-    </script>
+        </script>
 </body>
 
 </html>

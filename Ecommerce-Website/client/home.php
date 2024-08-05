@@ -7,10 +7,13 @@
 */ -->
 <?php
 session_start();
-if (!isset($_SESSION['cart'])) {
-	$_SESSION['cart'] = [];
+unset($_SESSION['cart']);
+if (!isset($_SESSION['cart_items'])) {
+	$_SESSION['cart_items'] = [];
+	$_SESSION['cart_total'] = 0;
+	$_SESSION['cart_num_of_items'] = 0;
 }
-
+var_dump($_SESSION);
 ?>
 <!doctype html>
 <html lang="en">
@@ -103,7 +106,7 @@ if (!isset($_SESSION['cart'])) {
 													} else {
 														echo "http://localhost/ecommerce-Website/reg/login.php";
 													}
-													?>"><i class="fa-solid fa-cart-shopping"></i><?php echo count($_SESSION['cart']) ?></a></li>
+													?>"><i class="fa-solid fa-cart-shopping"></i><?php echo $_SESSION['cart_num_of_items'] ?></a></li>
 				</ul>
 			</div>
 		</div>

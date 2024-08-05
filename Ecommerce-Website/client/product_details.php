@@ -2,6 +2,11 @@
 
 // db_connect.php
 session_start();
+if (!isset($_SESSION['cart_items'])) {
+    $_SESSION['cart_items'] = [];
+    $_SESSION['cart_total'] = 0;
+    $_SESSION['cart_num_of_items'] = 0;
+}
 
 $servername = "localhost";
 $username = "root";
@@ -141,7 +146,7 @@ $conn->close();
                                                     } else {
                                                         echo "http://localhost/ecommerce-Website/reg/login.php";
                                                     }
-                                                    ?>"><i class="fa-solid fa-cart-shopping"></i><span id="productsInCart"><?php echo count($_SESSION['cart']) ?> </span></a></li>
+                                                    ?>"><i class="fa-solid fa-cart-shopping"></i><?php echo $_SESSION['cart_num_of_items'] ?></a></li>
                 </ul>
             </div>
         </div>

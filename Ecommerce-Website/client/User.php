@@ -94,12 +94,12 @@ $ids_result = mysqli_fetch_all($ids_result, MYSQLI_ASSOC);
                                           echo "http://localhost/ecommerce-Website/reg/login.php";
                                         }
                                         ?>"><?php
-                                            if (isset($_SESSION['user_id'])) {
-                                              echo "Log out";
-                                            } else {
-                                              echo "Log In";
-                                            }
-                                            ?></a></li>
+                              if (isset($_SESSION['user_id'])) {
+                                echo "Log out";
+                              } else {
+                                echo "Log In";
+                              }
+                              ?></a></li>
         </ul>
 
         <ul class=" custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
@@ -115,7 +115,7 @@ $ids_result = mysqli_fetch_all($ids_result, MYSQLI_ASSOC);
                                         } else {
                                           echo "http://localhost/ecommerce-Website/reg/login.php";
                                         }
-                                        ?>"><i class="fa-solid fa-cart-shopping"></i><?php echo count($_SESSION['cart']) ?></a></li>
+                                        ?>"><i class="fa-solid fa-cart-shopping"></i><?php echo $_SESSION['cart_num_of_items'] ?></a></li>
         </ul>
       </div>
     </div>

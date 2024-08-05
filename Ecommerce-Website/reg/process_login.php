@@ -2,6 +2,7 @@
 session_start();
 include_once 'db.php';
 unset($_SESSION['user_id']);
+unset($_SESSION['admin']);
 
 class User
 {
@@ -11,6 +12,7 @@ class User
     public $id;
     public $email;
     public $password;
+    public $role_id;
 
     public function __construct($db)
     {
@@ -29,6 +31,7 @@ class User
 
         if ($user && password_verify($this->password, $user['password'])) {
             $this->id = $user['user_id'];
+            $this->role_id = $user['role_id'];
             return true;
         }
 
@@ -46,6 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($user->login()) {
         $_SESSION['user_id'] = $user->id;
+        if ($user->role_id == 1) {
+            $_SESSION['admin'] = true;
+        }
         header('Location: http://localhost/Ecommerce-Website/client/home.php');
         exit();
     } else {

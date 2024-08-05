@@ -7,7 +7,6 @@
 */ -->
 <?php
 session_start();
-
 ?>
 
 
@@ -109,7 +108,7 @@ session_start();
 													} else {
 														echo "http://localhost/ecommerce-Website/reg/login.php";
 													}
-													?>"><i class="fa-solid fa-cart-shopping"></i><?php echo count($_SESSION['cart']) ?></a></li>
+													?>"><i class="fa-solid fa-cart-shopping"></i><?php echo $_SESSION['cart_num_of_items'] ?></a></li>
 				</ul>
 			</div>
 		</div>

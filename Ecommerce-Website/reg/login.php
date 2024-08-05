@@ -20,11 +20,11 @@
 <body>
     <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Furni navigation bar">
         <div class="container">
-            <a class="navbar-brand" href="../client/home.php">Furni<span>.</span></a>
+            <a class="navbar-brand" href="home.php">Furni<span>.</span></a>
 
             <!-- Search Form -->
-            <form class="d-flex ms-3" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <form class="d-flex ms-3" method="post" action="products.php">
+                <input class="form-control me-2" type="number" placeholder="Filter By Price" aria-label="Search" name="query" required>
                 <button class="btn btn-outline-light" type="submit">Search</button>
             </form>
 
@@ -54,7 +54,7 @@
                             if (is_array($data) && !empty($data)) {
                                 foreach ($data as $category) {
                                     if (is_array($category) && isset($category['category_id']) && isset($category['category_name'])) {
-                                        echo "<li><a class='dropdown-item' href='../client/category_page.php?id={$category['category_id']}'>{$category['category_name']}</a></li>";
+                                        echo "<li><a class='dropdown-item' href='category_page.php?id={$category['category_id']}'>{$category['category_name']}</a></li>";
                                     }
                                 }
                             }
@@ -64,10 +64,36 @@
                     </li>
                     <li><a class="nav-link" href="http://localhost/ecommerce-Website/client/about.php">About</a></li>
                     <li><a class="nav-link" href="http://localhost/ecommerce-Website/client/contact.php">Contact</a></li>
-                    <li><a class="nav-link" href="http://localhost/44.php"><i class="fa-solid fa-cart-shopping"></i></a></li>
+                    <li><a class="nav-link" href="<?php
+                                                    if (isset($_SESSION['user_id'])) {
+                                                        echo "http://localhost/ecommerce-Website/reg/process_logout.php";
+                                                    } else {
+                                                        echo "http://localhost/ecommerce-Website/reg/login.php";
+                                                    }
+                                                    ?>"><?php
+                                                        if (isset($_SESSION['user_id'])) {
+                                                            echo "Log out";
+                                                        } else {
+                                                            echo "Log In";
+                                                        }
+                                                        ?></a></li>
                 </ul>
 
-
+                <ul class=" custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                    <li><a class="nav-link" href="<?php if (isset($_SESSION['user_id'])) {
+                                                        echo "http://localhost/ecommerce-Website/client/user.php?id={$_SESSION['user_id']}";
+                                                    } else {
+                                                        echo "http://localhost/ecommerce-Website/reg/login.php";
+                                                    }
+                                                    ?>
+													 "><i class="fa-regular fa-user"></i></a></li>
+                    <li><a class="nav-link" href="<?php if (isset($_SESSION['user_id'])) {
+                                                        echo "http://localhost/ecommerce-Website/client/cart.php";
+                                                    } else {
+                                                        echo "http://localhost/ecommerce-Website/reg/login.php";
+                                                    }
+                                                    ?>"><i class="fa-solid fa-cart-shopping"></i><?php echo $_SESSION['cart_num_of_items'] ?></a></li>
+                </ul>
             </div>
         </div>
     </nav>
